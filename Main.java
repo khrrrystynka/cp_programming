@@ -29,7 +29,7 @@ class Book {
     }
 }
 
-class LibraryApp {
+ class LibraryApp {
     private static List<Book> books = new ArrayList<>();
     private static Scanner scanner = new Scanner(System.in);
 
@@ -41,7 +41,7 @@ class LibraryApp {
             System.out.println("3. View All Books");
             System.out.println("4. Update Book");
             System.out.println("5. Search Book");
-            System.out.println("6. Sort Books by Title");
+            System.out.println("6. Sort Books");
             System.out.println("7. Exit");
             System.out.print("Choose an option: ");
 
@@ -54,7 +54,7 @@ class LibraryApp {
                 case 3 -> viewBooks();
                 case 4 -> updateBook();
                 case 5 -> searchBook();
-                case 6 -> sortBooks();
+                case 6 -> sortBooksMenu();
                 case 7 -> {
                     System.out.println("Exiting the application...");
                     return;
@@ -114,8 +114,24 @@ class LibraryApp {
                 .forEach(System.out::println);
     }
 
-    private static void sortBooks() {
-        books.sort(Comparator.comparing(Book::getTitle));
-        System.out.println("Books sorted by title.");
+    private static void sortBooksMenu() {
+        System.out.println("Sort books by:");
+        System.out.println("1. Title");
+        System.out.println("2. Author");
+        System.out.println("3. Date Added");
+        System.out.print("Choose an option: ");
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+
+        switch (choice) {
+            case 1 -> books.sort(Comparator.comparing(Book::getTitle));
+            case 2 -> books.sort(Comparator.comparing(Book::getAuthor));
+            case 3 -> books.sort(Comparator.comparing(Book::getAddedDate));
+            default -> {
+                System.out.println("Invalid choice, sorting by Title.");
+                books.sort(Comparator.comparing(Book::getTitle));
+            }
+        }
+        System.out.println("Books sorted successfully.");
     }
 }
