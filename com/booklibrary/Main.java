@@ -1,41 +1,14 @@
-import java.time.LocalDateTime;
+package com.booklibrary;
+
 import java.util.*;
 
-class Book {
-    private static int idCounter = 1;
-    private int id;
-    private String title;
-    private String author;
-    private LocalDateTime addedDate;
-
-    public Book(String title, String author) {
-        this.id = idCounter++;
-        this.title = title;
-        this.author = author;
-        this.addedDate = LocalDateTime.now();
-    }
-
-    public int getId() { return id; }
-    public String getTitle() { return title; }
-    public String getAuthor() { return author; }
-    public LocalDateTime getAddedDate() { return addedDate; }
-
-    public void setTitle(String title) { this.title = title; }
-    public void setAuthor(String author) { this.author = author; }
-
-    @Override
-    public String toString() {
-        return "ID: " + id + ", Title: " + title + ", Author: " + author + ", Added: " + addedDate;
-    }
-}
-
- class LibraryApp {
-    private static List<Book> books = new ArrayList<>();
-    private static Scanner scanner = new Scanner(System.in);
+public class Main {
+    private static List<Book> books = LibraryManager.loadBooksFromFile();
+    private static final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
         while (true) {
-            System.out.println("\n--- Book Library Menu ---");
+            System.out.println("\nBook Library Menu");
             System.out.println("1. Add Book");
             System.out.println("2. Remove Book");
             System.out.println("3. View All Books");
@@ -53,9 +26,10 @@ class Book {
                 case 2 -> removeBook();
                 case 3 -> viewBooks();
                 case 4 -> updateBook();
-                case 5 -> searchBook();
+                case 5 -> searchBooksMenu();
                 case 6 -> sortBooksMenu();
                 case 7 -> {
+                    LibraryManager.saveBooksToFile(books);
                     System.out.println("Exiting the application...");
                     return;
                 }
@@ -77,7 +51,7 @@ class Book {
         System.out.print("Enter book ID to remove: ");
         int id = scanner.nextInt();
         books.removeIf(book -> book.getId() == id);
-        System.out.println("Book removed (if existed). ");
+        System.out.println("Book removed (if existed).");
     }
 
     private static void viewBooks() {
@@ -106,11 +80,34 @@ class Book {
         System.out.println("Book not found!");
     }
 
-    private static void searchBook() {
+    private static void searchBooksMenu() {
+        System.out.println("Search books by:");
+        System.out.println("1. Title");
+        System.out.println("2. Author");
+        System.out.print("Choose an option: ");
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+
+        switch (choice) {
+            case 1 -> searchByTitle();
+            case 2 -> searchByAuthor();
+            default -> System.out.println("Invalid choice!");
+        }
+    }
+
+    private static void searchByTitle() {
         System.out.print("Enter title to search: ");
         String title = scanner.nextLine().toLowerCase();
         books.stream()
                 .filter(book -> book.getTitle().toLowerCase().contains(title))
+                .forEach(System.out::println);
+    }
+
+    private static void searchByAuthor() {
+        System.out.print("Enter author to search: ");
+        String author = scanner.nextLine().toLowerCase();
+        books.stream()
+                .filter(book -> book.getAuthor().toLowerCase().contains(author))
                 .forEach(System.out::println);
     }
 
